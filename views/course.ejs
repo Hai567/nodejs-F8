@@ -1,0 +1,13 @@
+<%- include('header') %>
+<main>
+    <div class="side-bar">
+        <h3>Difficulty Level: <%= course.level %></h3>
+        <button>Click Me</button>
+    </div>
+    <div class="course-details">
+        <h1><%= course.name %></h1>
+        <iframe src="https://www.youtube.com/embed/<%=course.videoID%>?modestbranding=1&rel=0" title="YouTube video player" allowfullscreen="allowfullscreen" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+</main>
+
+<%- include('footer') %>

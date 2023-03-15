@@ -1,0 +1,76 @@
+<%- include('header') %>
+    <div class="container allCourses-table-container">
+        <h1 style="text-align: center; margin: 0;">All Courses</h1>
+        <a type="button" class="btn-link" style="margin-left: 10%;" href="/course/bin">Bin (<%= numberOfDeleted %>)</a>
+        <hr  style="width: 85%; text-align: center; margin: auto;">
+        <table class="table table-light table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Created At</th>
+                    <th scope="col" colspan="3">Updated At</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (courses.length === 0){ %>
+                    <h1 class="text-danger" style="margin: .5em; text-align: center; padding: 0;">There Is No Course At The Moment!!!</h1>
+                <% } %>
+                <% for (let i = 0; i < courses.length; i++){ %>
+                    <tr>
+                        <th scope="row"><%= i + 1 %></th>
+                        <td><%= courses[i].name %></td>
+                        <td><%= courses[i].description %></td>
+                        <td><%= courses[i].createdAt %></td>
+                        <td><%= courses[i].updatedAt %></td>
+                        <td scope="col">
+                            <a href="/course/<%= courses[i].slug %>/edit" type="button" class="btn text-primary">Edit</a>
+                        </td>
+                        <td>
+                            <a type="button" class="btn text-danger" data-bs-whatever="<%= courses[i].slug %>" data-bs-toggle="modal" data-bs-target="#delete-course-dropdown">
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+    <div class="modal fade" id="delete-course-dropdown" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="staticBackdropLabel">Delete Course Confirmation</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Do You Want To Delete This Course?
+                <br>
+                <strong class="text-danger">THIS COURSE WILL BE MOVE TO BIN</strong> 
+            </div>
+            <div class="modal-footer">
+              <button id="confirm-delete-btn" type="button" class="btn btn-danger">Delete</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <form id="delete-form" method="POST"></form>
+
+      <script>
+        let deleteForm = document.querySelector("form#delete-form")
+        let confirmDeleteBtn = document.querySelector("#confirm-delete-btn")
+        let deleteCourseDropdown = document.getElementById('delete-course-dropdown')
+        deleteCourseDropdown.addEventListener('show.bs.modal', event => {
+            let button = event.relatedTarget // Button that triggered the modal
+            let chosenToDeleteSlug = button.getAttribute('data-bs-whatever') // Extract info from data-bs-* attributes
+            confirmDeleteBtn.addEventListener("click", event => {
+                deleteForm.action = `/course/${chosenToDeleteSlug}/delete?_method=DELETE`
+                deleteForm.submit()
+            })
+        })
+      </script>
+
+<%- include('footer') %>

@@ -1,0 +1,89 @@
+<%- include("header") %>
+
+    <div class="allCourses-table-container container">
+        <h1 style="text-align: center;">Courses In Bin</h1>
+        <a href="/course/all-courses" style="margin: 0; margin-left: 2em;">All Courses</a>
+        <table class="table table-light table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Created At</th>
+                    <th scope="col" colspan="3">Deleted At</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (let i = 0; i < courses.length; i++){ %>
+                    <tr>
+                        <th scope="row"><%= i + 1 %></th>
+                        <td><%= courses[i].name %></td>
+                        <td><%= courses[i].description %></td>
+                        <td><%= courses[i].createdAt %></td>
+                        <td><%= courses[i].deletedAt %></td>
+                        <td scope="col">
+                            <a href="" id="restoreButton" type="button" data-course-slug = "<%= courses[i].slug %>" class="btn text-primary">Restore</a>
+                        </td>
+                        <td>
+                            <a type="button" class="btn text-danger" data-bs-whatever="<%= courses[i].slug %>" data-bs-toggle="modal" data-bs-target="#delete-course-dropdown">
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                <% } %>
+            </tbody>
+            <% if (courses.length === 0){ %>
+                <td colspan="5" style="text-align: center;"><p>Bin Empty. <a href="course/all-courses">Return To All Courses Section</a></p></td>
+            <% } %>
+        </table>
+
+        <div class="modal fade" id="delete-course-dropdown" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="staticBackdropLabel">Delete Course Confirmation</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Do You Want To Delete This Course Permanently?
+                    <br>
+                    <strong class="text-danger">ONCE DELETED, IT CAN NOT BE REVERSE</strong> 
+                </div>
+                <div class="modal-footer">
+                  <button id="confirm-delete-btn" type="button" class="btn btn-danger">Delete</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+              </div>
+            </div>
+          </div>
+    </div>
+
+    <form id="delete-form" method="POST"></form>
+    <form id="patch-form" method="POST"></form>
+
+      <script>
+        let deleteForm = document.querySelector("form#delete-form")
+        let confirmDeleteBtn = document.querySelector("#confirm-delete-btn")
+        let deleteCourseDropdown = document.getElementById('delete-course-dropdown')
+        let restoreBtns = document.querySelectorAll("a#restoreButton")
+        let patchForm = document.querySelector("#patch-form")
+        deleteCourseDropdown.addEventListener('show.bs.modal', event => {
+            let button = event.relatedTarget // Button that triggered the modal
+            let chosenToDeleteSlug = button.getAttribute('data-bs-whatever') // Extract info from data-bs-* attributes
+            confirmDeleteBtn.addEventListener("click", event => {
+                deleteForm.action = `/course/${chosenToDeleteSlug}/destroy?_method=DELETE`
+                deleteForm.submit()
+            })
+        })
+        restoreBtns.forEach((restoreBtn) => {
+            restoreBtn.addEventListener("click", (e) => {
+                e.preventDefault()
+                let chosenToRestoreSlug = e.target.getAttribute("data-course-slug")
+                patchForm.action = `/course/${chosenToRestoreSlug}/restore?_method=PATCH`
+                patchForm.submit()
+            })
+        })
+      </script>
+
+
+<%- include('footer') %>

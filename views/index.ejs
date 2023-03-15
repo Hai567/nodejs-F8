@@ -1,0 +1,22 @@
+<%- include("header") %>
+    <div class="container" style="padding-top: 4em;">
+        <h1>Home Page</h1>
+        <br>
+        <div class="courses-container">
+            <% courses.forEach((course) => { %>
+                <div class="card course">
+                    <a href="/course/<%= course.slug %>">
+                        <img src="<%= course.img %>" class="card-img-top" alt="<%= course.name %>">
+                        <div class="card-body course-text">
+                            <h5 class="card-title"><%= course.name %></h5>
+                            <p class="card-text"><%= course.description %></p>
+                            <button href="<%= course.slug %>" class="btn btn-primary learn-button">Learn</button>
+                        </div>
+                    </a>
+                </div>
+            <% }) %>
+        </div>
+
+    </div>
+
+<%- include("footer") %>
