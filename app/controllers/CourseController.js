@@ -14,6 +14,20 @@ class CourseController {
             .catch(err => {
         })
     }
+    // [POST] /course/many-actions
+    manyActions(req, res, next){
+        switch (req.body.method) {
+            case "delete":
+                Courses.delete({
+                    "_id": {$in: req.body["selected-courses"]}
+                })
+                    .then() //// Need this to delete many
+                res.redirect("back")
+                break;
+            default:
+                break;
+        }
+    }
     // [GET] course//all-courses
     allCourses(req, res, next){
         let i = 0
