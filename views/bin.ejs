@@ -1,41 +1,62 @@
 <%- include("header") %>
 
     <div class="allCourses-table-container container">
-        <h1 style="text-align: center;">Courses In Bin</h1>
-        <a href="/course/all-courses" style="margin: 0; margin-left: 2em;">All Courses</a>
-        <table class="table table-light table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Created At</th>
-                    <th scope="col" colspan="3">Deleted At</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% for (let i = 0; i < courses.length; i++){ %>
+        <form action="/course/bin/many-actions" method="POST">
+            <h1 style="text-align: center;">Courses In Bin</h1>
+            <a href="/course/all-courses" style="margin: 0; margin-left: 2em;">All Courses</a>
+            <div style="display: flex; gap: 20px; margin: 1em auto auto 10%">
+                <div class="" style="padding-left: 15px">
+                    <input id="select-all-checkbox" class="form-check-input" type="checkbox" id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault">Select All</label>
+                </div>
+                <select name="method" style="width: 10em;" class="form-select form-select-sm" aria-label=".form-select-sm example" required>
+                    <option value="" selected>Select Action</option>
+                    <option value="delete">Delete</option>
+                    <option value="restore">Restore</option>
+                </select>
+                <button id="apply-button" type="submit" class="btn btn-primary btn-sm disabled">Apply Action</button>
+            </div>
+            <hr style="text-align: center; width: 85%; margin: .5em auto auto auto;">
+            <table class="table table-light table-hover">
+                <thead>
                     <tr>
-                        <th scope="row"><%= i + 1 %></th>
-                        <td><%= courses[i].name %></td>
-                        <td><%= courses[i].description %></td>
-                        <td><%= courses[i].createdAt %></td>
-                        <td><%= courses[i].deletedAt %></td>
-                        <td scope="col">
-                            <a href="" id="restoreButton" type="button" data-course-slug = "<%= courses[i].slug %>" class="btn text-primary">Restore</a>
-                        </td>
-                        <td>
-                            <a type="button" class="btn text-danger" data-bs-whatever="<%= courses[i].slug %>" data-bs-toggle="modal" data-bs-target="#delete-course-dropdown">
-                                Delete
-                            </a>
-                        </td>
+                        <th></th>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Created At</th>
+                        <th scope="col" colspan="3">Deleted At</th>
                     </tr>
+                </thead>
+                <tbody>
+                    <% for (let i = 0; i < courses.length; i++){ %>
+                        <tr>
+                            <td>
+                                <div class="" style="padding-left: 15px;">
+                                    <input id="flexCheckDefault" class="course-checkboxes form-check-input" type="checkbox" value="<%= courses[i]._id %>" name="selectedCourses">
+                                </div>
+                            </td>
+                            <th scope="row"><%= i + 1 %></th>
+                            <td><%= courses[i].name %></td>
+                            <td><%= courses[i].description %></td>
+                            <td><%= courses[i].createdAt %></td>
+                            <td><%= courses[i].deletedAt %></td>
+                            <td scope="col">
+                                <a href="" id="restoreButton" type="button" data-course-slug = "<%= courses[i].slug %>" class="btn text-primary">Restore</a>
+                            </td>
+                            <td>
+                                <a type="button" class="btn text-danger" data-bs-whatever="<%= courses[i].slug %>" data-bs-toggle="modal" data-bs-target="#delete-course-dropdown">
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                    <% } %>
+                </tbody>
+                <% if (courses.length === 0){ %>
+                    <td colspan="5" style="text-align: center;"><p>Bin Empty. <a href="course/all-courses">Return To All Courses Section</a></p></td>
                 <% } %>
-            </tbody>
-            <% if (courses.length === 0){ %>
-                <td colspan="5" style="text-align: center;"><p>Bin Empty. <a href="course/all-courses">Return To All Courses Section</a></p></td>
-            <% } %>
-        </table>
+            </table>
+        </form>
 
         <div class="modal fade" id="delete-course-dropdown" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -67,6 +88,17 @@
         let deleteCourseDropdown = document.getElementById('delete-course-dropdown')
         let restoreBtns = document.querySelectorAll("a#restoreButton")
         let patchForm = document.querySelector("#patch-form")
+        let selectAllCheckbox = $("input#select-all-checkbox")
+        let allCourseCheckboxes = $("input.course-checkboxes")
+        let applyBtn = $("button#apply-button")
+        function allowApplyBtnToBeClicked(){
+            let numberOfCheckedCourseCheckboxes = $("input.course-checkboxes:checked").length
+            if (numberOfCheckedCourseCheckboxes > 0){
+                applyBtn.removeClass("disabled")
+            }else{
+                applyBtn.addClass("disabled")
+            }
+        }
         deleteCourseDropdown.addEventListener('show.bs.modal', event => {
             let button = event.relatedTarget // Button that triggered the modal
             let chosenToDeleteSlug = button.getAttribute('data-bs-whatever') // Extract info from data-bs-* attributes
@@ -82,6 +114,22 @@
                 patchForm.action = `/course/${chosenToRestoreSlug}/restore?_method=PATCH`
                 patchForm.submit()
             })
+        })
+
+        selectAllCheckbox.change(function() {
+            let isSelectAllChecked =  $(this).prop("checked")
+            allCourseCheckboxes.prop("checked", isSelectAllChecked)
+            allowApplyBtnToBeClicked()
+        })
+        allCourseCheckboxes.change(function(){
+            let numberOfCheckedCourseCheckboxes = $("input.course-checkboxes:checked").length
+            let isCheckedAll = allCourseCheckboxes.length === numberOfCheckedCourseCheckboxes
+            if (!isCheckedAll){
+                selectAllCheckbox.prop("checked", false)
+            }else{
+                selectAllCheckbox.prop("checked", true)
+            }
+            allowApplyBtnToBeClicked()
         })
       </script>
 

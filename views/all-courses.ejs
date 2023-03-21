@@ -34,7 +34,11 @@
                     <% } %>
                     <% for (let i = 0; i < courses.length; i++){ %>
                         <tr>
-                            <td><input class="form-check-input course-checkboxes" name="selected-courses" type="checkbox" value="<%= courses[i]._id %>" id="flexCheckDefault"></td>
+                            <td>
+                                <div class="" style="padding-left: 15px;">
+                                    <input class="course-checkboxes form-check-input" type="checkbox" name="selected-courses" type="checkbox" value="<%= courses[i]._id %>" id="flexCheckDefault">
+                                  </div>
+                            </td>
                             <td scope="row"><%= i + 1 %></td>
                             <td><%= courses[i].name %></td>
                             <td><%= courses[i].description %></td>
@@ -92,7 +96,8 @@
         })
         // Khi "Select All" Thay Doi --> Tat ca "Course Checkboxes" Thay Doi Cung
         selectAllCheckbox.change(function(){
-            courseCheckboxes.prop("checked", $(this).is(":checked"))
+            let isSelectAllChecked =  $(this).prop("checked")
+            courseCheckboxes.prop("checked", isSelectAllChecked)
             allowApplyBtnToBeClicked()
         })
         // Khi Co 1 "Course Checkboxes" Khong Duoc Checked --> "Select All Checkbox" Khong Duoc Checked
@@ -107,7 +112,6 @@
         })
         function allowApplyBtnToBeClicked(){
             let checkedCount = $("input.course-checkboxes:checked").length
-            console.log(checkedCount)
             let applyBtn = $("button#apply-btn")
             if (checkedCount != 0){
                 applyBtn.removeClass("disabled")

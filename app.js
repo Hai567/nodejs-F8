@@ -17,8 +17,9 @@ app.use(bodyParser.urlencoded({
 }))
 app.use(bodyParser.json())
 
+// Use Method Override To Be Able To Change The Method Of The Forms
+// To Patch, Put
 app.use(methodOverride('_method'))
-
 mongoose.set('strictQuery', false);
 db.connect()
 routesManager(app)

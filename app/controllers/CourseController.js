@@ -17,13 +17,32 @@ class CourseController {
     // [POST] /course/many-actions
     manyActions(req, res, next){
         switch (req.body.method) {
-            case "delete":
+            case "delete":   
                 Courses.delete({
                     "_id": {$in: req.body["selected-courses"]}
                 })
                     .then() //// Need this to delete many
                 res.redirect("back")
                 break;
+        }
+    }
+    // [POST] /course/bin/many-actions
+    binManyActions(req, res, next){
+        switch (req.body.method) {
+            case "delete":
+                Courses.deleteMany({
+                    "_id": {$in: req.body.selectedCourses}
+                })
+                .then() //// Need this to run the action
+                res.redirect("back")
+                break;
+            case "restore":
+                Courses.restore({
+                    "_id": {$in: req.body.selectedCourses}
+                })
+                .then() //// Need this to run the action
+                res.redirect("back")
+                break
             default:
                 break;
         }
