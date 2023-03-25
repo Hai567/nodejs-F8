@@ -49,6 +49,15 @@ class CourseController {
     }
     // [GET] course//all-courses
     allCourses(req, res, next){
+        let courseQuery = Courses.find({})
+        if (req.query.hasOwnProperty("_sort")){
+            let sortColumn = req.query.column
+            let sortType = req.query.type
+            courseQuery = courseQuery.sort({
+                [sortColumn]: sortType
+            })
+        }
+
         let i = 0
         Courses.findDeleted()
             .then(softDeletedCourses => {
@@ -56,7 +65,7 @@ class CourseController {
                     i ++
                 });
             })
-        Courses.find()
+        courseQuery
             .then((courses) => {
                 res.render("all-courses", {
                     courses,

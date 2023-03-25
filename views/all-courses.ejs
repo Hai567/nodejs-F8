@@ -1,4 +1,5 @@
 <%- include('header') %>
+
     <div class="container allCourses-table-container">
         <form method="POST" action="/course/many-actions">
             <h1 style="ext-align: center; margin: 0;">All Courses</h1>
@@ -22,10 +23,43 @@
                     <tr>
                         <th></th>
                         <th scope="col">#</th>
-                        <th scope="col">Name</th>
+                        <th scope="col">
+                            Name
+                            <% if (_sort.column === "name") { %>
+                                <% if (_sort.type === 'asc') { %>
+                                    <a href="?_sort&column=name&type=desc" style="margin-left: 5px;"><i class="fa-solid fa-sort-up"></i></a>
+                                <% } else if (_sort.type === 'desc') { %>
+                                    <a href="?_sort&column=name&type=asc" style="margin-left: 5px;"><i class="fa-solid fa-sort-down"></i></a>
+                                <% } %>
+                            <% } else { %>
+                                <a href="?_sort&column=name&type=desc" style="margin-left: 5px;"><i class="fa-solid fa-sort"></i></a>
+                            <% } %>
+                        </th>
                         <th scope="col">Description</th>
-                        <th scope="col">Created At</th>
-                        <th scope="col" colspan="3">Updated At</th>
+                        <th scope="col">
+                            Created At
+                            <% if (_sort.column === "createdAt") { %>
+                                <% if (_sort.type === 'asc') { %>
+                                    <a href="?_sort&column=createdAt&type=desc" style="margin-left: 5px;"><i class="fa-solid fa-sort-up"></i></a>
+                                <% } else if (_sort.type === 'desc') { %>
+                                    <a href="?_sort&column=createdAt&type=asc" style="margin-left: 5px;"><i class="fa-solid fa-sort-down"></i></a>
+                                <% } %>
+                            <% } else { %>
+                                <a href="?_sort&column=createdAt&type=desc" style="margin-left: 5px;"><i class="fa-solid fa-sort"></i></a>
+                            <% } %>
+                        </th>
+                        <th scope="col" colspan="3">
+                            Updated At
+                            <% if (_sort.column === "updatedAt") { %>
+                                <% if (_sort.type === 'asc') { %>
+                                    <a href="?_sort&column=updatedAt&type=desc" style="margin-left: 5px;"><i class="fa-solid fa-sort-up"></i></a>
+                                <% } else if (_sort.type === 'desc') { %>
+                                    <a href="?_sort&column=updatedAt&type=asc" style="margin-left: 5px;"><i class="fa-solid fa-sort-down"></i></a>
+                                <% } %>
+                            <% } else { %>
+                                <a href="?_sort&column=updatedAt&type=desc" style="margin-left: 5px;"><i class="fa-solid fa-sort"></i></a>
+                            <% } %>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
